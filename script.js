@@ -2,30 +2,31 @@
 // HASSI SIGNATURE NOIR - MAIN JS
 // ====================================
 
-console.log('✅ Script Loaded!');
+console.log("✅ Script Loaded!");
+
 const products = [
     {
         id: 1,
-        name: 'Royal Oud',
+        name: "Royal Oud",
         price: 12000,
-        category: 'Men',
-        image: 'images/perfume1.jpg',  // 👈 Local image
+        category: "Men",
+        image: "./perfume1.jpg",
         stock: 10
     },
     {
         id: 2,
-        name: 'Golden Amber',
+        name: "Golden Amber",
         price: 9500,
-        category: 'Women',
-        image: 'images/perfume2.jpg',  // 👈 Local image
+        category: "Women",
+        image: "./perfume2.jpg",
         stock: 10
     },
     {
         id: 3,
-        name: 'Black Musk',
+        name: "Black Musk",
         price: 14000,
-        category: 'Unisex',
-        image: 'images/perfume3.jpg',  // 👈 Local image
+        category: "Unisex",
+        image: "./perfume3.jpg",
         stock: 10
     }
 ];
