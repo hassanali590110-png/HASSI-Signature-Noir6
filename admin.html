@@ -353,8 +353,7 @@
         // ADMIN DASHBOARD - FIREBASE
         // ====================================
 
-        import { auth, db, collection, getDocs, doc, updateDoc, onSnapshot, query, orderBy } from './js/firebase.js';
-
+       import { auth, db, collection, getDocs, doc, updateDoc, onSnapshot, query, orderBy } from './firebase.js';
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
         function formatPrice(price) {
