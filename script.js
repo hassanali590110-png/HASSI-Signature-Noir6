@@ -10,7 +10,7 @@ const products = [
         price: 12000,
         category: 'Men',
         image: 'images/perfume1.jpg',  // 👈 Local image
-        stock: 10
+        stock: 15
     },
     {
         id: 2,
@@ -18,7 +18,7 @@ const products = [
         price: 9500,
         category: 'Women',
         image: 'images/perfume2.jpg',  // 👈 Local image
-        stock: 10
+        stock: 3
     },
     {
         id: 3,
@@ -26,7 +26,7 @@ const products = [
         price: 14000,
         category: 'Unisex',
         image: 'images/perfume3.jpg',  // 👈 Local image
-        stock: 10
+        stock: 0
     }
 ];
 
