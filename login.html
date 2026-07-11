@@ -162,7 +162,7 @@
         // ====================================
         // LOGIN - FIREBASE AUTH
         // ====================================
-        const { db, doc, getDoc } = await import('./js/firebase.js');
+        import { auth, signInWithEmailAndPassword } from './firebase.js';
         
         const loginForm = document.getElementById('loginForm');
         const loginBtn = document.getElementById('loginBtn');
