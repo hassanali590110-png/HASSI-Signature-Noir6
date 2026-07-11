@@ -348,8 +348,8 @@
         // PROFILE PAGE - WITH FIREBASE
         // ====================================
 
-        import { auth, db, doc, getDoc, updateDoc, onAuthStateChanged } from './js/firebase.js';
-
+        import { auth, db, doc, getDoc, updateDoc, onAuthStateChanged } from './firebase.js';
+        
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
         let orders = JSON.parse(localStorage.getItem('orders')) || [];
