@@ -256,9 +256,7 @@
         // ====================================
         // ORDERS PAGE - FIREBASE
         // ====================================
-
-        import { auth, db, collection, getDocs, onSnapshot, query, orderBy } from './js/firebase.js';
-
+       import { auth, db, collection, getDocs, onSnapshot, query, orderBy } from './firebase.js';
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
         function formatPrice(price) {
