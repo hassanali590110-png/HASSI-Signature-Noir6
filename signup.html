@@ -1,3 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | HASSI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        .auth-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #0b0b0b;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: #1a1a1a;
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #333;
+        }
+
+        .auth-box .logo {
+            text-align: center;
+            font-size: 28px;
+            color: #d4af37;
+            font-weight: 700;
+        }
+
+        .auth-box .logo span {
+            display: block;
+            color: #888;
+            font-size: 13px;
+        }
+
+        .auth-box h2 {
+            color: #fff;
+            text-align: center;
+            margin: 20px 0 8px;
+        }
+
+        .auth-box p {
+            color: #888;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .auth-box input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            background: #0b0b0b;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .auth-box input:focus {
+            border-color: #d4af37;
+        }
+
+        .auth-box button {
+            width: 100%;
+            padding: 14px;
+            background: #d4af37;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .auth-box button:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+
+        .auth-box button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-box .link {
+            text-align: center;
+            margin-top: 15px;
+            color: #888;
+        }
+
+        .auth-box .link a {
+            color: #d4af37;
+            text-decoration: none;
+        }
+
+        .auth-box .link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-msg {
+            color: #ff4444;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-msg.show {
+            display: block;
+        }
+
+        .loading-text {
+            display: inline-block;
+        }
+
+        .spinner {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-page">
+        <div class="auth-box">
+            <div class="logo">HASSI <span>Signature Noir</span></div>
+            <h2>Create Account</h2>
+            <p>Join the HASSI family</p>
+            <div id="signupError" class="error-msg"></div>
+            <form id="signupForm">
+                <input type="text" id="signupName" placeholder="Full Name" required>
+                <input type="email" id="signupEmail" placeholder="Email Address" required>
+                <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" required>
+                <button type="submit" id="signupBtn">📝 Create Account</button>
+            </form>
+            <div class="link">Already have an account? <a href="login.html">Login</a></div>
+            <div class="link"><a href="index.html">← Back to Home</a></div>
+        </div>
+    </div>
+
 <script type="module">
 
 import {
