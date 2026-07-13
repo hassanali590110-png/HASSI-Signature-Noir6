@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation | HASSI Signature Noir</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        /* ===== CONFIRMATION PAGE ===== */
+        .confirmation-page {
+            padding: 100px 5%;
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .confirmation-box {
+            max-width: 700px;
+            width: 100%;
+            margin: 0 auto;
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 45px 40px;
+            text-align: center;
+            border: 1px solid #333;
+            transition: 0.3s;
+        }
+
+        .confirmation-box:hover {
+            border-color: #d4af37;
+        }
+
+        .confirmation-box .success-icon {
+            font-size: 75px;
+            color: #28a745;
+            margin-bottom: 15px;
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            80% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .confirmation-box h2 {
+            color: #d4af37;
+            font-size: 30px;
+            margin-bottom: 5px;
+        }
+
+        .confirmation-box .sub-text {
+            color: #888;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        .confirmation-box .order-id {
+            color: #d4af37;
+            font-size: 18px;
+            font-weight: bold;
+            background: #0b0b0b;
+            padding: 10px 25px;
+            border-radius: 10px;
+            display: inline-block;
+            margin: 10px 0 15px;
+            border: 1px solid #333;
+            letter-spacing: 1px;
+        }
+
+        /* ===== ORDER SUMMARY ===== */
+        .order-summary-box {
+            background: #0b0b0b;
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin: 20px 0;
+            text-align: left;
+            border: 1px solid #222;
+        }
+
+        .order-summary-box .summary-title {
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .order-summary-box .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 7px 0;
+            color: #888;
+            font-size: 14px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .order-summary-box .row:last-child {
+            border-bottom: none;
+        }
+
+        .order-summary-box .row .item-name {
+            color: #fff;
+        }
+
+        .order-summary-box .row .item-price {
+            color: #d4af37;
+            font-weight: 500;
+        }
+
+        .order-summary-box .total-row {
+            border-top: 2px solid #d4af37;
+            padding-top: 12px;
+            margin-top: 5px;
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .order-summary-box .total-row span:last-child {
+            color: #d4af37;
+            font-size: 20px;
+        }
+
+        .order-summary-box .discount-row {
+            color: #28a745;
+        }
+
+        /* ===== SHIPPING INFO ===== */
+        .shipping-info {
+            margin: 15px 0;
+            text-align: left;
+            background: #0b0b0b;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid #222;
+        }
+
+        .shipping-info .ship-title {
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .shipping-info p {
+            color: #888;
+            font-size: 14px;
+            margin: 4px 0;
+        }
+
+        .shipping-info strong {
+            color: #fff;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn-group a {
+            padding: 12px 35px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+            font-size: 15px;
+        }
+
+        .btn-group .btn-primary {
+            background: #d4af37;
+            color: #000;
+        }
+
+        .btn-group .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 25px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-group .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+
+        .btn-group .btn-secondary:hover {
+            background: #444;
+            transform: scale(1.05);
+        }
+
+        .email-note {
+            color: #666;
+            font-size: 13px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #222;
+        }
+
+        .email-note i {
+            color: #d4af37;
+            margin-right: 5px;
+        }
+
+        /* ===== CART SIDEBAR ===== */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100vh;
+            background: #1a1a1a;
+            padding: 25px;
+            transition: 0.4s;
+            z-index: 9999;
+            overflow-y: auto;
+            border-left: 2px solid #d4af37;
+        }
+
+        .cart-sidebar.active {
+            right: 0;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .cart-header h2 {
+            color: #d4af37;
+        }
+
+        .cart-header button {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .cart-items {
+            padding: 20px 0;
+            min-height: 200px;
+        }
+
+        .cart-footer {
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+
+        .cart-footer h3 {
+            color: #d4af37;
+            margin-bottom: 15px;
+        }
+
+        .checkout-btn {
+            display: block;
+            background: #d4af37;
+            color: #000;
+            text-align: center;
+            padding: 12px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .checkout-btn:hover {
+            transform: scale(1.02);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .confirmation-box {
+                padding: 25px 20px;
+            }
+
+            .confirmation-box h2 {
+                font-size: 24px;
+            }
+
+            .btn-group a {
+                width: 100%;
+                text-align: center;
+            }
+
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+
+            .order-summary-box {
+                padding: 15px;
+            }
+
+            .order-summary-box .row {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== NAVBAR ===== -->
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">HASSI <span>Signature Noir</span></a>
+            <button class="menu-btn" id="menuBtn"><i class="fa-solid fa-bars"></i></button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#products">Shop</a></li>
+                <li><a href="orders.html">My Orders</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-icons">
+                <a href="login.html"><i class="fa-regular fa-user"></i></a>
+                <a href="#" id="cart-icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span id="cart-count">0</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ===== CONFIRMATION ===== -->
+    <section class="confirmation-page">
+        <div class="confirmation-box" id="confirmationBox">
+            <!-- Loaded by JavaScript -->
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h3>HASSI</h3>
+                <p>Luxury perfumes crafted for elegance.</p>
+            </div>
+            <div class="footer-box">
+                <h3>Contact</h3>
+                <p>hassanali590110@gmail.com</p>
+                <p>+92 332 3365097</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 HASSI Signature Noir. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== CART SIDEBAR ===== -->
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h2>🛒 Your Cart</h2>
+            <button id="close-cart">✕</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p style="color:#888; text-align:center; padding:40px 0;">Your cart is empty.</p>
+        </div>
+        <div class="cart-footer">
+            <h3>Total: Rs. <span id="cart-total">0</span></h3>
+            <a href="checkout.html" class="checkout-btn">Proceed to Checkout</a>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT -->
+    <!-- ============================================================ -->
+    <script>
+        // ====================================
+        // CONFIRMATION PAGE
+        // ====================================
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function formatPrice(price) {
+            return Number(price).toLocaleString('en-PK');
+        }
+
+        function loadConfirmation() {
+            const container = document.getElementById('confirmationBox');
+
+            // Get order from URL params
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+
+            // Try to get order from localStorage
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            let order = null;
+
+            if (orderId) {
+                order = orders.find(o => o.id === orderId);
+            }
+
+            // If not found, get the latest order
+            if (!order && orders.length > 0) {
+                order = orders[orders.length - 1];
+            }
+
+            // Agar order nahi mila
+            if (!order) {
+                container.innerHTML = `
+                    <div style="padding:40px; text-align:center;">
+                        <i class="fa-regular fa-circle-xmark" style="font-size:60px; color:#ff4444;"></i>
+                        <h2 style="color:#ff4444; margin:15px 0;">No Order Found</h2>
+                        <p style="color:#888;">We couldn't find your order details.</p>
+                        <a href="index.html" style="display:inline-block; margin-top:15px; padding:12px 30px; background:#d4af37; color:#000; text-decoration:none; border-radius:30px; font-weight:bold;">🏠 Go Home</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // ============================
+            // BUILD ORDER SUMMARY
+            // ============================
+            let itemsHTML = '';
+            let subtotal = 0;
+
+            if (order.items && order.items.length > 0) {
+                order.items.forEach(item => {
+                    const price = Number(item.price) || 0;
+                    const qty = item.quantity || 1;
+                    subtotal += price * qty;
+                    itemsHTML += `
+                        <div class="row">
+                            <span class="item-name">${item.name} × ${qty}</span>
+                            <span class="item-price">Rs. ${formatPrice(price * qty)}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            const tax = order.tax || Math.round(subtotal * 0.05);
+            const discount = order.discount || 0;
+            const total = order.total || (subtotal + tax - discount);
+
+            // ============================
+            // RENDER CONFIRMATION
+            // ============================
+            container.innerHTML = `
+                <!-- Success Icon -->
+                <div class="success-icon">
+                    <i class="fa-regular fa-circle-check"></i>
+                </div>
+
+                <!-- Title -->
+                <h2>🎉 Order Placed Successfully!</h2>
+                <p class="sub-text">Thank you for your order! We'll process it shortly.</p>
+
+                <!-- Order ID -->
+                <div class="order-id">#${order.id}</div>
+
+                <!-- Order Summary -->
+                <div class="order-summary-box">
+                    <div class="summary-title">
+                        <i class="fa-regular fa-receipt"></i> Order Summary
+                    </div>
+                    ${itemsHTML}
+                    <div class="row">
+                        <span>Subtotal</span>
+                        <span>Rs. ${formatPrice(subtotal)}</span>
+                    </div>
+                    <div class="row">
+                        <span>Tax (5%)</span>
+                        <span>Rs. ${formatPrice(tax)}</span>
+                    </div>
+                    ${discount > 0 ? `
+                    <div class="row discount-row">
+                        <span>Discount (${Math.round((discount / subtotal) * 100)}%)</span>
+                        <span>-Rs. ${formatPrice(discount)}</span>
+                    </div>
+                    ` : ''}
+                    <div class="row total-row">
+                        <span>Total</span>
+                        <span>Rs. ${formatPrice(total)}</span>
+                    </div>
+                </div>
+
+                <!-- Shipping Info -->
+                <div class="shipping-info">
+                    <div class="ship-title">
+                        <i class="fa-regular fa-truck"></i> Shipping Details
+                    </div>
+                    <p><strong>👤 Name:</strong> ${order.billing?.name || 'N/A'}</p>
+                    <p><strong>📧 Email:</strong> ${order.billing?.email || 'N/A'}</p>
+                    <p><strong>📞 Phone:</strong> ${order.billing?.phone || 'N/A'}</p>
+                    <p><strong>📍 Address:</strong> ${order.billing?.address || 'N/A'}</p>
+                    <p><strong>💳 Payment:</strong> ${order.paymentMethod || 'Cash on Delivery'}</p>
+                </div>
+
+                <!-- Email Note -->
+                <div class="email-note">
+                    <i class="fa-regular fa-envelope"></i>
+                    A confirmation email has been sent to your email address.
+                </div>
+
+                <!-- Buttons -->
+                <div class="btn-group">
+                    <a href="orders.html" class="btn-primary">📦 View My Orders</a>
+                    <a href="index.html" class="btn-secondary">🏠 Continue Shopping</a>
+                </div>
+            `;
+
+            // Cart update karo (empty karo)
+            updateCartUI();
+        }
+
+        // ====================================
+        // CART FUNCTIONS
+        // ====================================
+        function updateCartUI() {
+            const items = document.getElementById('cart-items');
+            const total = document.getElementById('cart-total');
+            const count = document.getElementById('cart-count');
+
+            if (!items) return;
+
+            let totalPrice = 0;
+            if (cart.length === 0) {
+                items.innerHTML = `<p style="color:#888; text-align:center; padding:40px 0;">Your cart is empty.</p>`;
+            } else {
+                items.innerHTML = '';
+                cart.forEach((item, index) => {
+                    const price = Number(item.price) || 0;
+                    const qty = item.quantity || 1;
+                    totalPrice += price * qty;
+                    items.innerHTML += `
+                        <div style="display:flex; align-items:center; gap:15px; padding:12px 0; border-bottom:1px solid #333;">
+                            <img src="${item.image || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; object-fit:cover; border-radius:10px;">
+                            <div style="flex:1;">
+                                <h4 style="font-size:14px; color:#fff;">${item.name}</h4>
+                                <p style="color:#d4af37; font-weight:600;">Rs. ${formatPrice(price)}</p>
+                            </div>
+                            <button onclick="window.removeFromCart(${index})" style="background:transparent; border:none; color:#ff4444; font-size:18px; cursor:pointer;">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+            }
+            if (total) total.textContent = formatPrice(totalPrice);
+            if (count) count.textContent = cart.length;
+        }
+
+        window.removeFromCart = function (index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartUI();
+        };
+
+        // ====================================
+        // CART TOGGLE
+        // ====================================
+        document.getElementById('cart-icon')?.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('cart-sidebar')?.classList.add('active');
+        });
+
+        document.getElementById('close-cart')?.addEventListener('click', function () {
+            document.getElementById('cart-sidebar')?.classList.remove('active');
+        });
+
+        // ====================================
+        // MOBILE MENU
+        // ====================================
+        document.getElementById('menuBtn')?.addEventListener('click', function () {
+            document.getElementById('navMenu')?.classList.toggle('active');
+        });
+
+        // ====================================
+        // PAGE LOAD
+        // ====================================
+        window.addEventListener('load', function () {
+            loadConfirmation();
+            updateCartUI();
+            console.log('✅ Order Confirmation Page Loaded!');
+        });
+    </script>
+
+</body>
+
+</html>
