@@ -47,11 +47,9 @@
                 transform: scale(0);
                 opacity: 0;
             }
-
             80% {
                 transform: scale(1.1);
             }
-
             100% {
                 transform: scale(1);
                 opacity: 1;
@@ -460,6 +458,9 @@
             const discount = order.discount || 0;
             const total = order.total || (subtotal + tax - discount);
 
+            // Get name from billing (fullName or name)
+            const customerName = order.billing?.fullName || order.billing?.name || 'N/A';
+
             // ============================
             // RENDER CONFIRMATION
             // ============================
@@ -507,7 +508,7 @@
                     <div class="ship-title">
                         <i class="fa-regular fa-truck"></i> Shipping Details
                     </div>
-                    <p><strong>👤 Name:</strong> ${order.billing?.name || 'N/A'}</p>
+                    <p><strong>👤 Name:</strong> ${customerName}</p>
                     <p><strong>📧 Email:</strong> ${order.billing?.email || 'N/A'}</p>
                     <p><strong>📞 Phone:</strong> ${order.billing?.phone || 'N/A'}</p>
                     <p><strong>📍 Address:</strong> ${order.billing?.address || 'N/A'}</p>
@@ -568,7 +569,7 @@
             if (count) count.textContent = cart.length;
         }
 
-        window.removeFromCart = function (index) {
+        window.removeFromCart = function(index) {
             cart.splice(index, 1);
             localStorage.setItem('cart', JSON.stringify(cart));
             updateCartUI();
@@ -577,26 +578,26 @@
         // ====================================
         // CART TOGGLE
         // ====================================
-        document.getElementById('cart-icon')?.addEventListener('click', function (e) {
+        document.getElementById('cart-icon')?.addEventListener('click', function(e) {
             e.preventDefault();
             document.getElementById('cart-sidebar')?.classList.add('active');
         });
 
-        document.getElementById('close-cart')?.addEventListener('click', function () {
+        document.getElementById('close-cart')?.addEventListener('click', function() {
             document.getElementById('cart-sidebar')?.classList.remove('active');
         });
 
         // ====================================
         // MOBILE MENU
         // ====================================
-        document.getElementById('menuBtn')?.addEventListener('click', function () {
+        document.getElementById('menuBtn')?.addEventListener('click', function() {
             document.getElementById('navMenu')?.classList.toggle('active');
         });
 
         // ====================================
         // PAGE LOAD
         // ====================================
-        window.addEventListener('load', function () {
+        window.addEventListener('load', function() {
             loadConfirmation();
             updateCartUI();
             console.log('✅ Order Confirmation Page Loaded!');
