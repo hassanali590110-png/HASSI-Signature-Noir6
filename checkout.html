@@ -723,13 +723,13 @@
     <!-- ============================================================ -->
     <script type="module">
         // ====================================
-        // IMPORTS
+        // IMPORTS - ✅ FIXED (./js/ hatao)
         // ====================================
         import {
             db,
             collection,
             addDoc
-        } from "./js/firebase.js";
+        } from "./firebase.js";  // 👈 YEH CHANGE KARO
 
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
@@ -814,7 +814,7 @@
         // SHIPPING METHOD SELECTOR
         // ====================================
         document.querySelectorAll('.shipping-method').forEach(el => {
-            el.addEventListener('click', function () {
+            el.addEventListener('click', function() {
                 document.querySelectorAll('.shipping-method').forEach(m => m.classList.remove('active'));
                 this.classList.add('active');
                 this.querySelector('input[type="radio"]').checked = true;
@@ -825,7 +825,7 @@
         // PAYMENT METHOD SELECTOR
         // ====================================
         document.querySelectorAll('.payment-method').forEach(el => {
-            el.addEventListener('click', function () {
+            el.addEventListener('click', function() {
                 document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
                 this.classList.add('active');
                 this.querySelector('input[type="radio"]').checked = true;
@@ -836,7 +836,7 @@
         // BILLING ADDRESS TOGGLE
         // ====================================
         document.querySelectorAll('input[name="billing"]').forEach(el => {
-            el.addEventListener('change', function () {
+            el.addEventListener('change', function() {
                 const differentBilling = document.getElementById('differentBilling');
                 if (this.value === 'different') {
                     differentBilling.style.display = 'block';
@@ -849,7 +849,7 @@
         // ====================================
         // PLACE ORDER - FIXED ✅
         // ====================================
-        document.getElementById('checkoutForm')?.addEventListener('submit', async function (e) {
+        document.getElementById('checkoutForm')?.addEventListener('submit', async function(e) {
             e.preventDefault();
 
             console.log('✅ Form Submitted!');
@@ -990,7 +990,7 @@
             if (count) count.textContent = cart.length;
         }
 
-        window.removeFromCart = function (index) {
+        window.removeFromCart = function(index) {
             cart.splice(index, 1);
             localStorage.setItem('cart', JSON.stringify(cart));
             updateCartUI();
@@ -1000,26 +1000,26 @@
         // ====================================
         // CART TOGGLE
         // ====================================
-        document.getElementById('cart-icon')?.addEventListener('click', function (e) {
+        document.getElementById('cart-icon')?.addEventListener('click', function(e) {
             e.preventDefault();
             document.getElementById('cart-sidebar')?.classList.add('active');
         });
 
-        document.getElementById('close-cart')?.addEventListener('click', function () {
+        document.getElementById('close-cart')?.addEventListener('click', function() {
             document.getElementById('cart-sidebar')?.classList.remove('active');
         });
 
         // ====================================
         // MOBILE MENU
         // ====================================
-        document.getElementById('menuBtn')?.addEventListener('click', function () {
+        document.getElementById('menuBtn')?.addEventListener('click', function() {
             document.getElementById('navMenu')?.classList.toggle('active');
         });
 
         // ====================================
         // PAGE LOAD
         // ====================================
-        window.addEventListener('load', function () {
+        window.addEventListener('load', function() {
             updateCartUI();
             updateOrderSummary();
 
