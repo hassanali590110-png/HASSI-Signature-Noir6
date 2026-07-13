@@ -718,324 +718,329 @@
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- JAVASCRIPT -->
-    <!-- ============================================================ -->
-    <script type="module">
-        // ====================================
-        // IMPORTS - ✅ FIXED (./js/ hatao)
-        // ====================================
-        import {
-            db,
-            collection,
-            addDoc
-        } from "./firebase.js";  // 👈 YEH CHANGE KARO
+   // ============================================================
+// JAVASCRIPT - CHECKOUT (COMPLETE FIXED SECTION)
+// ============================================================
 
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+<script type="module">
+    // ====================================
+    // IMPORTS - ✅ FIXED PATH
+    // ====================================
+    import {
+        db,
+        collection,
+        addDoc
+    } from "./firebase.js";  // 👈 YEH CHANGE KARO (./js/ hatao)
 
-        function formatPrice(price) {
-            return Number(price).toLocaleString('en-PK');
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function formatPrice(price) {
+        return Number(price).toLocaleString('en-PK');
+    }
+
+    // ====================================
+    // GET SESSION ID
+    // ====================================
+    function getSessionId() {
+        let sessionId = sessionStorage.getItem('sessionId');
+        if (!sessionId) {
+            sessionId = 'guest_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            sessionStorage.setItem('sessionId', sessionId);
+        }
+        return sessionId;
+    }
+
+    // ====================================
+    // UPDATE ORDER SUMMARY
+    // ====================================
+    function updateOrderSummary() {
+        const itemsContainer = document.getElementById('orderItemsSummary');
+        const totalsContainer = document.getElementById('orderTotals');
+
+        if (!itemsContainer || !totalsContainer) return;
+
+        if (cart.length === 0) {
+            itemsContainer.innerHTML = `<p style="color:#888; text-align:center; padding:20px 0;">Your cart is empty.</p>`;
+            totalsContainer.innerHTML = '';
+            document.getElementById('placeOrderBtn').disabled = true;
+            return;
         }
 
-        // ====================================
-        // GET SESSION ID
-        // ====================================
-        function getSessionId() {
-            let sessionId = sessionStorage.getItem('sessionId');
-            if (!sessionId) {
-                sessionId = 'guest_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-                sessionStorage.setItem('sessionId', sessionId);
+        document.getElementById('placeOrderBtn').disabled = false;
+
+        let subtotal = 0;
+        let itemsHTML = '';
+
+        cart.forEach(item => {
+            const price = Number(item.price) || 0;
+            subtotal += price;
+            itemsHTML += `
+                <div class="order-item-summary">
+                    <img src="${item.image || 'https://via.placeholder.com/50'}" alt="${item.name}">
+                    <div class="info">
+                        <div class="name">${item.name}</div>
+                        <div class="qty">Qty: 1</div>
+                        <div class="price">Rs. ${formatPrice(price)}</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        itemsContainer.innerHTML = itemsHTML;
+
+        const tax = Math.round(subtotal * 0.05);
+        const total = subtotal + tax;
+
+        totalsContainer.innerHTML = `
+            <div class="order-total-row">
+                <span>Subtotal</span>
+                <span>Rs. ${formatPrice(subtotal)}</span>
+            </div>
+            <div class="order-total-row">
+                <span>Tax (5%)</span>
+                <span>Rs. ${formatPrice(tax)}</span>
+            </div>
+            <div class="order-total-row">
+                <span>Shipping</span>
+                <span style="color:#28a745;">Free</span>
+            </div>
+            <div class="order-total-row total">
+                <span>Total</span>
+                <span>Rs. ${formatPrice(total)}</span>
+            </div>
+        `;
+    }
+
+    // ====================================
+    // SHIPPING METHOD SELECTOR
+    // ====================================
+    document.querySelectorAll('.shipping-method').forEach(el => {
+        el.addEventListener('click', function() {
+            document.querySelectorAll('.shipping-method').forEach(m => m.classList.remove('active'));
+            this.classList.add('active');
+            this.querySelector('input[type="radio"]').checked = true;
+        });
+    });
+
+    // ====================================
+    // PAYMENT METHOD SELECTOR
+    // ====================================
+    document.querySelectorAll('.payment-method').forEach(el => {
+        el.addEventListener('click', function() {
+            document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+            this.classList.add('active');
+            this.querySelector('input[type="radio"]').checked = true;
+        });
+    });
+
+    // ====================================
+    // BILLING ADDRESS TOGGLE
+    // ====================================
+    document.querySelectorAll('input[name="billing"]').forEach(el => {
+        el.addEventListener('change', function() {
+            const differentBilling = document.getElementById('differentBilling');
+            if (this.value === 'different') {
+                differentBilling.style.display = 'block';
+            } else {
+                differentBilling.style.display = 'none';
             }
-            return sessionId;
+        });
+    });
+
+    // ====================================
+    // PLACE ORDER - FIXED ✅
+    // ====================================
+    document.getElementById('checkoutForm')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        console.log('✅ Form Submitted!');
+
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const email = document.getElementById('emailAddress').value.trim();
+        const phone = document.getElementById('phoneNumber').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const city = document.getElementById('city').value.trim();
+        const country = document.getElementById('country').value;
+
+        if (!firstName || !lastName || !email || !phone || !address || !city) {
+            alert('❌ Please fill all required fields!');
+            return;
         }
 
-        // ====================================
-        // UPDATE ORDER SUMMARY
-        // ====================================
-        function updateOrderSummary() {
-            const itemsContainer = document.getElementById('orderItemsSummary');
-            const totalsContainer = document.getElementById('orderTotals');
+        if (cart.length === 0) {
+            alert('❌ Your cart is empty!');
+            return;
+        }
 
-            if (!itemsContainer || !totalsContainer) return;
+        const paymentMethod = document.querySelector('input[name="payment"]:checked');
+        if (!paymentMethod) {
+            alert('❌ Please select a payment method');
+            return;
+        }
 
-            if (cart.length === 0) {
-                itemsContainer.innerHTML = `<p style="color:#888; text-align:center; padding:20px 0;">Your cart is empty.</p>`;
-                totalsContainer.innerHTML = '';
-                document.getElementById('placeOrderBtn').disabled = true;
-                return;
-            }
+        const shippingMethod = document.querySelector('input[name="shipping"]:checked');
+        const shippingCost = shippingMethod && shippingMethod.value === 'Swift' ? 500 : 0;
 
-            document.getElementById('placeOrderBtn').disabled = false;
+        let subtotal = 0;
+        cart.forEach(item => {
+            subtotal += Number(item.price) || 0;
+        });
+        const tax = Math.round(subtotal * 0.05);
+        const total = subtotal + tax + shippingCost;
 
-            let subtotal = 0;
-            let itemsHTML = '';
+        const sessionId = getSessionId();
 
-            cart.forEach(item => {
+        const order = {
+            id: 'ORD-' + Date.now().toString().slice(-8),
+            items: cart.map(item => ({
+                name: item.name,
+                price: Number(item.price) || 0,
+                quantity: 1,
+                image: item.image || ''
+            })),
+            billing: {
+                firstName,
+                lastName,
+                email,
+                phone,
+                address,
+                city,
+                country,
+                fullName: firstName + ' ' + lastName
+            },
+            shippingMethod: shippingMethod ? shippingMethod.value : 'Standard',
+            shippingCost: shippingCost,
+            paymentMethod: paymentMethod.value,
+            subtotal: subtotal,
+            tax: tax,
+            total: total,
+            status: 'processing',
+            date: new Date().toLocaleDateString(),
+            createdAt: new Date().toISOString(),
+            sessionId: sessionId
+        };
+
+        const submitBtn = document.getElementById('placeOrderBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Placing Order...';
+
+        try {
+            // Save to Firebase
+            const docRef = await addDoc(collection(db, "orders"), {
+                ...order,
+                createdAt: new Date().toISOString(),
+                status: 'processing'
+            });
+            console.log('✅ Order saved to Firebase! ID:', docRef.id);
+
+            // Save to localStorage
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            orders.push(order);
+            localStorage.setItem('orders', JSON.stringify(orders));
+
+            // Clear cart
+            localStorage.setItem('cart', JSON.stringify([]));
+            cart = [];
+
+            // 👇 REDIRECT TO CONFIRMATION PAGE
+            console.log('🔀 Redirecting to confirmation page...');
+            window.location.href = `order-confirmation.html?orderId=${order.id}`;
+
+        } catch (error) {
+            console.error('❌ Firebase Error:', error);
+            alert('⚠️ Order saved locally. Check internet connection.');
+
+            // Fallback
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            orders.push(order);
+            localStorage.setItem('orders', JSON.stringify(orders));
+            localStorage.setItem('cart', JSON.stringify([]));
+            cart = [];
+
+            // 👇 REDIRECT TO CONFIRMATION PAGE
+            window.location.href = `order-confirmation.html?orderId=${order.id}`;
+        }
+    });
+
+    // ====================================
+    // CART FUNCTIONS
+    // ====================================
+    function updateCartUI() {
+        const items = document.getElementById('cart-items');
+        const total = document.getElementById('cart-total');
+        const count = document.getElementById('cart-count');
+
+        if (!items) return;
+
+        let totalPrice = 0;
+        if (cart.length === 0) {
+            items.innerHTML = `<p style="color:#888; text-align:center; padding:40px 0;">Your cart is empty.</p>`;
+        } else {
+            items.innerHTML = '';
+            cart.forEach((item, index) => {
                 const price = Number(item.price) || 0;
-                subtotal += price;
-                itemsHTML += `
-                    <div class="order-item-summary">
-                        <img src="${item.image || 'https://via.placeholder.com/50'}" alt="${item.name}">
-                        <div class="info">
-                            <div class="name">${item.name}</div>
-                            <div class="qty">Qty: 1</div>
-                            <div class="price">Rs. ${formatPrice(price)}</div>
+                totalPrice += price;
+                items.innerHTML += `
+                    <div style="display:flex; align-items:center; gap:15px; padding:12px 0; border-bottom:1px solid #333;">
+                        <img src="${item.image || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; object-fit:cover; border-radius:10px;">
+                        <div style="flex:1;">
+                            <h4 style="font-size:14px; color:#fff;">${item.name}</h4>
+                            <p style="color:#d4af37; font-weight:600;">Rs. ${formatPrice(price)}</p>
                         </div>
+                        <button onclick="window.removeFromCart(${index})" style="background:transparent; border:none; color:#ff4444; font-size:18px; cursor:pointer;">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
                     </div>
                 `;
             });
+        }
+        if (total) total.textContent = formatPrice(totalPrice);
+        if (count) count.textContent = cart.length;
+    }
 
-            itemsContainer.innerHTML = itemsHTML;
+    window.removeFromCart = function(index) {
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartUI();
+        updateOrderSummary();
+    };
 
-            const tax = Math.round(subtotal * 0.05);
-            const total = subtotal + tax;
+    // ====================================
+    // CART TOGGLE
+    // ====================================
+    document.getElementById('cart-icon')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('cart-sidebar')?.classList.add('active');
+    });
 
-            totalsContainer.innerHTML = `
-                <div class="order-total-row">
-                    <span>Subtotal</span>
-                    <span>Rs. ${formatPrice(subtotal)}</span>
-                </div>
-                <div class="order-total-row">
-                    <span>Tax (5%)</span>
-                    <span>Rs. ${formatPrice(tax)}</span>
-                </div>
-                <div class="order-total-row">
-                    <span>Shipping</span>
-                    <span style="color:#28a745;">Free</span>
-                </div>
-                <div class="order-total-row total">
-                    <span>Total</span>
-                    <span>Rs. ${formatPrice(total)}</span>
-                </div>
-            `;
+    document.getElementById('close-cart')?.addEventListener('click', function() {
+        document.getElementById('cart-sidebar')?.classList.remove('active');
+    });
+
+    // ====================================
+    // MOBILE MENU
+    // ====================================
+    document.getElementById('menuBtn')?.addEventListener('click', function() {
+        document.getElementById('navMenu')?.classList.toggle('active');
+    });
+
+    // ====================================
+    // PAGE LOAD
+    // ====================================
+    window.addEventListener('load', function() {
+        updateCartUI();
+        updateOrderSummary();
+
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (user) {
+            const nameParts = user.name ? user.name.split(' ') : ['', ''];
+            document.getElementById('firstName').value = nameParts[0] || '';
+            document.getElementById('lastName').value = nameParts.slice(1).join(' ') || '';
+            document.getElementById('emailAddress').value = user.email || '';
+            document.getElementById('phoneNumber').value = user.phone || '';
         }
 
-        // ====================================
-        // SHIPPING METHOD SELECTOR
-        // ====================================
-        document.querySelectorAll('.shipping-method').forEach(el => {
-            el.addEventListener('click', function() {
-                document.querySelectorAll('.shipping-method').forEach(m => m.classList.remove('active'));
-                this.classList.add('active');
-                this.querySelector('input[type="radio"]').checked = true;
-            });
-        });
-
-        // ====================================
-        // PAYMENT METHOD SELECTOR
-        // ====================================
-        document.querySelectorAll('.payment-method').forEach(el => {
-            el.addEventListener('click', function() {
-                document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
-                this.classList.add('active');
-                this.querySelector('input[type="radio"]').checked = true;
-            });
-        });
-
-        // ====================================
-        // BILLING ADDRESS TOGGLE
-        // ====================================
-        document.querySelectorAll('input[name="billing"]').forEach(el => {
-            el.addEventListener('change', function() {
-                const differentBilling = document.getElementById('differentBilling');
-                if (this.value === 'different') {
-                    differentBilling.style.display = 'block';
-                } else {
-                    differentBilling.style.display = 'none';
-                }
-            });
-        });
-
-        // ====================================
-        // PLACE ORDER - FIXED ✅
-        // ====================================
-        document.getElementById('checkoutForm')?.addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            console.log('✅ Form Submitted!');
-
-            const firstName = document.getElementById('firstName').value.trim();
-            const lastName = document.getElementById('lastName').value.trim();
-            const email = document.getElementById('emailAddress').value.trim();
-            const phone = document.getElementById('phoneNumber').value.trim();
-            const address = document.getElementById('address').value.trim();
-            const city = document.getElementById('city').value.trim();
-            const country = document.getElementById('country').value;
-
-            if (!firstName || !lastName || !email || !phone || !address || !city) {
-                alert('❌ Please fill all required fields!');
-                return;
-            }
-
-            if (cart.length === 0) {
-                alert('❌ Your cart is empty!');
-                return;
-            }
-
-            const paymentMethod = document.querySelector('input[name="payment"]:checked');
-            if (!paymentMethod) {
-                alert('❌ Please select a payment method');
-                return;
-            }
-
-            const shippingMethod = document.querySelector('input[name="shipping"]:checked');
-            const shippingCost = shippingMethod && shippingMethod.value === 'Swift' ? 500 : 0;
-
-            let subtotal = 0;
-            cart.forEach(item => {
-                subtotal += Number(item.price) || 0;
-            });
-            const tax = Math.round(subtotal * 0.05);
-            const total = subtotal + tax + shippingCost;
-
-            const sessionId = getSessionId();
-
-            const order = {
-                id: 'ORD-' + Date.now().toString().slice(-8),
-                items: cart.map(item => ({
-                    name: item.name,
-                    price: Number(item.price) || 0,
-                    quantity: 1,
-                    image: item.image || ''
-                })),
-                billing: {
-                    firstName,
-                    lastName,
-                    email,
-                    phone,
-                    address,
-                    city,
-                    country,
-                    fullName: firstName + ' ' + lastName
-                },
-                shippingMethod: shippingMethod ? shippingMethod.value : 'Standard',
-                shippingCost: shippingCost,
-                paymentMethod: paymentMethod.value,
-                subtotal: subtotal,
-                tax: tax,
-                total: total,
-                status: 'processing',
-                date: new Date().toLocaleDateString(),
-                createdAt: new Date().toISOString(),
-                sessionId: sessionId
-            };
-
-            const submitBtn = document.getElementById('placeOrderBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Placing Order...';
-
-            try {
-                await addDoc(collection(db, "orders"), {
-                    ...order,
-                    createdAt: new Date().toISOString(),
-                    status: 'processing'
-                });
-
-                const orders = JSON.parse(localStorage.getItem('orders')) || [];
-                orders.push(order);
-                localStorage.setItem('orders', JSON.stringify(orders));
-
-                localStorage.setItem('cart', JSON.stringify([]));
-                cart = [];
-
-                window.location.href = `order-confirmation.html?orderId=${order.id}`;
-
-            } catch (error) {
-                console.error('❌ Firebase Error:', error);
-                alert('⚠️ Order saved locally. Check internet connection.');
-
-                const orders = JSON.parse(localStorage.getItem('orders')) || [];
-                orders.push(order);
-                localStorage.setItem('orders', JSON.stringify(orders));
-                localStorage.setItem('cart', JSON.stringify([]));
-                cart = [];
-
-                window.location.href = `order-confirmation.html?orderId=${order.id}`;
-            }
-        });
-
-        // ====================================
-        // CART FUNCTIONS
-        // ====================================
-        function updateCartUI() {
-            const items = document.getElementById('cart-items');
-            const total = document.getElementById('cart-total');
-            const count = document.getElementById('cart-count');
-
-            if (!items) return;
-
-            let totalPrice = 0;
-            if (cart.length === 0) {
-                items.innerHTML = `<p style="color:#888; text-align:center; padding:40px 0;">Your cart is empty.</p>`;
-            } else {
-                items.innerHTML = '';
-                cart.forEach((item, index) => {
-                    const price = Number(item.price) || 0;
-                    totalPrice += price;
-                    items.innerHTML += `
-                        <div style="display:flex; align-items:center; gap:15px; padding:12px 0; border-bottom:1px solid #333;">
-                            <img src="${item.image || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; object-fit:cover; border-radius:10px;">
-                            <div style="flex:1;">
-                                <h4 style="font-size:14px; color:#fff;">${item.name}</h4>
-                                <p style="color:#d4af37; font-weight:600;">Rs. ${formatPrice(price)}</p>
-                            </div>
-                            <button onclick="window.removeFromCart(${index})" style="background:transparent; border:none; color:#ff4444; font-size:18px; cursor:pointer;">
-                                <i class="fa-regular fa-trash-can"></i>
-                            </button>
-                        </div>
-                    `;
-                });
-            }
-            if (total) total.textContent = formatPrice(totalPrice);
-            if (count) count.textContent = cart.length;
-        }
-
-        window.removeFromCart = function(index) {
-            cart.splice(index, 1);
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartUI();
-            updateOrderSummary();
-        };
-
-        // ====================================
-        // CART TOGGLE
-        // ====================================
-        document.getElementById('cart-icon')?.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('cart-sidebar')?.classList.add('active');
-        });
-
-        document.getElementById('close-cart')?.addEventListener('click', function() {
-            document.getElementById('cart-sidebar')?.classList.remove('active');
-        });
-
-        // ====================================
-        // MOBILE MENU
-        // ====================================
-        document.getElementById('menuBtn')?.addEventListener('click', function() {
-            document.getElementById('navMenu')?.classList.toggle('active');
-        });
-
-        // ====================================
-        // PAGE LOAD
-        // ====================================
-        window.addEventListener('load', function() {
-            updateCartUI();
-            updateOrderSummary();
-
-            const user = JSON.parse(localStorage.getItem('currentUser'));
-            if (user) {
-                const nameParts = user.name ? user.name.split(' ') : ['', ''];
-                document.getElementById('firstName').value = nameParts[0] || '';
-                document.getElementById('lastName').value = nameParts.slice(1).join(' ') || '';
-                document.getElementById('emailAddress').value = user.email || '';
-                document.getElementById('phoneNumber').value = user.phone || '';
-            }
-
-            console.log('✅ Professional Checkout Page Loaded!');
-        });
-    </script>
-
-</body>
-
-</html>
+        console.log('✅ Professional Checkout Page Loaded!');
+    });
+</script>
