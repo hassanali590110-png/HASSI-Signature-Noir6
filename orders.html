@@ -4,13 +4,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orders | HASSI</title>
+
+    <title>My Orders | HASSI Signature Noir</title>
+
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #111;
+            color: #fff;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
         .orders-page {
             padding: 80px 5%;
             min-height: 70vh;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-heading span {
+            color: #d4af37;
+            letter-spacing: 2px;
+        }
+
+        .section-heading h2 {
+            margin-top: 10px;
+            font-size: 38px;
         }
 
         .order-card {
@@ -19,7 +49,7 @@
             padding: 25px;
             margin-bottom: 20px;
             border: 1px solid transparent;
-            transition: 0.3s;
+            transition: .3s;
             max-width: 900px;
             margin-left: auto;
             margin-right: auto;
@@ -41,19 +71,14 @@
 
         .order-id {
             color: #d4af37;
-            font-weight: 700;
+            font-weight: bold;
         }
 
         .order-status {
-            padding: 4px 16px;
+            padding: 5px 15px;
             border-radius: 20px;
             font-size: 13px;
-            font-weight: 600;
-        }
-
-        .order-status.delivered {
-            background: #28a745;
-            color: #fff;
+            font-weight: bold;
         }
 
         .order-status.processing {
@@ -66,39 +91,44 @@
             color: #fff;
         }
 
+        .order-status.delivered {
+            background: #28a745;
+            color: #fff;
+        }
+
         .order-status.cancelled {
             background: #dc3545;
             color: #fff;
         }
 
         .order-items {
-            padding: 15px 0;
+            padding: 20px 0;
         }
 
         .order-item {
             display: flex;
             align-items: center;
             gap: 15px;
-            padding: 8px 0;
+            padding: 10px 0;
         }
 
         .order-item img {
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             object-fit: cover;
             border-radius: 10px;
         }
 
-        .order-item .item-info {
+        .item-info {
             flex: 1;
         }
 
-        .order-item .item-info h4 {
-            font-size: 14px;
+        .item-info h4 {
+            font-size: 15px;
         }
 
-        .order-item .item-info p {
-            color: #888;
+        .item-info p {
+            color: #999;
             font-size: 13px;
         }
 
@@ -106,398 +136,659 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 15px;
             border-top: 1px solid #333;
+            padding-top: 15px;
             flex-wrap: wrap;
-            gap: 10px;
         }
 
-        .order-footer .total {
-            font-size: 18px;
-            font-weight: 700;
+        .total {
             color: #d4af37;
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .order-billing {
-            color: #888;
-            font-size: 13px;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #222;
-        }
-
-        .order-billing strong {
+            margin-top: 15px;
             color: #aaa;
+            font-size: 13px;
+            border-top: 1px solid #222;
+            padding-top: 12px;
         }
 
-        .empty-orders {
+        .empty-orders,
+        .loading-spinner {
             text-align: center;
             padding: 60px 20px;
         }
 
-        .empty-orders i {
+        .empty-orders i,
+        .loading-spinner i {
             font-size: 60px;
             color: #d4af37;
-        }
-
-        .empty-orders h3 {
-            margin: 20px 0 10px;
-        }
-
-        .empty-orders p {
-            color: #888;
         }
 
         .refresh-btn {
             background: #d4af37;
             color: #000;
             border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 30px;
             cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-            margin-left: 15px;
+            font-weight: bold;
+            margin-left: 10px;
         }
 
         .refresh-btn:hover {
             transform: scale(1.05);
         }
 
-        .loading-spinner {
+        .login-prompt {
             text-align: center;
-            padding: 40px;
-            color: #888;
+            padding: 60px 20px;
+            background: #1a1a1a;
+            border-radius: 16px;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
-        .loading-spinner i {
-            font-size: 30px;
+        .login-prompt i {
+            font-size: 60px;
             color: #d4af37;
         }
 
-        @media (max-width: 600px) {
-            .order-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+        .login-prompt h3 {
+            margin: 15px 0 10px;
+            color: #fff;
+        }
 
+        .login-prompt a {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 30px;
+            border: 2px solid #d4af37;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .login-prompt a:hover {
+            background: #d4af37;
+            color: #000;
+        }
+
+        /* ===== CART SIDEBAR ===== */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100vh;
+            background: #1a1a1a;
+            padding: 25px;
+            transition: 0.4s;
+            z-index: 9999;
+            overflow-y: auto;
+            border-left: 2px solid #d4af37;
+        }
+
+        .cart-sidebar.active {
+            right: 0;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .cart-header h2 {
+            color: #d4af37;
+        }
+
+        .cart-header button {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .cart-items {
+            padding: 20px 0;
+            min-height: 200px;
+        }
+
+        .cart-footer {
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+
+        .cart-footer h3 {
+            color: #d4af37;
+            margin-bottom: 15px;
+        }
+
+        .checkout-btn {
+            display: block;
+            background: #d4af37;
+            color: #000;
+            text-align: center;
+            padding: 12px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .checkout-btn:hover {
+            transform: scale(1.02);
+        }
+
+        @media(max-width:600px) {
+
+            .order-header,
             .order-footer {
                 flex-direction: column;
                 align-items: flex-start;
             }
+
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
         }
     </style>
+
 </head>
 
 <body>
 
-    <!-- Navbar -->
+    <!-- HEADER -->
     <header>
         <nav class="navbar">
-            <a href="index.html" class="logo">HASSI <span>Signature Noir</span></a>
-            <button class="menu-btn" id="menuBtn"><i class="fa-solid fa-bars"></i></button>
+
+            <a href="index.html" class="logo">
+                HASSI
+                <span>Signature Noir</span>
+            </a>
+
+            <button class="menu-btn" id="menuBtn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
             <ul class="nav-menu" id="navMenu">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="index.html#products">Shop</a></li>
-                <li><a href="orders.html" class="active">Orders</a></li>
+                <li><a href="orders.html" class="active">My Orders</a></li>
                 <li><a href="profile.html">Profile</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
+
             <div class="nav-icons">
-                <a href="#"><i class="fa-regular fa-user"></i></a>
+
+                <a href="profile.html">
+                    <i class="fa-regular fa-user"></i>
+                </a>
+
                 <a href="#" id="cart-icon">
                     <i class="fa-solid fa-cart-shopping"></i>
                     <span id="cart-count">0</span>
                 </a>
+
             </div>
+
         </nav>
     </header>
 
-    <!-- Orders -->
+    <!-- ========================= -->
+    <!-- ORDERS SECTION -->
+    <!-- ========================= -->
+
     <section class="orders-page">
+
         <div class="section-heading">
-            <span>✦ Orders ✦</span>
-            <h2>All Orders</h2>
-            <p style="color:#888;">
-                Total: <span id="totalOrders">0</span> orders
-                <button class="refresh-btn" onclick="loadOrders()">
-                    <i class="fa-solid fa-rotate"></i> Refresh
+            <span>✦ My Orders ✦</span>
+
+            <h2>Your Order History</h2>
+
+            <p style="color:#888; margin-top:10px;">
+                Total:
+                <span id="totalOrders">0</span>
+                Orders
+
+                <button class="refresh-btn" onclick="loadMyOrders()">
+                    <i class="fa-solid fa-rotate"></i>
+                    Refresh
                 </button>
             </p>
         </div>
+
         <div id="orders-container">
+
             <div class="loading-spinner">
                 <i class="fa-solid fa-spinner fa-spin"></i>
-                <p>Loading orders...</p>
+
+                <p style="margin-top:15px;">
+                    Loading Your Orders...
+                </p>
+
             </div>
+
         </div>
+
     </section>
 
-    <!-- Footer -->
+    <!-- ========================= -->
+    <!-- FOOTER -->
+    <!-- ========================= -->
+
     <footer class="footer">
+
         <div class="footer-container">
+
             <div class="footer-box">
                 <h3>HASSI</h3>
-                <p>Luxury perfumes crafted for elegance.</p>
+
+                <p>
+                    Luxury perfumes crafted for elegance.
+                </p>
             </div>
+
             <div class="footer-box">
+
                 <h3>Contact</h3>
+
                 <p>hassanali590110@gmail.com</p>
+
                 <p>+92 332 3365097</p>
+
             </div>
+
         </div>
+
         <div class="footer-bottom">
             <p>© 2026 HASSI Signature Noir.</p>
         </div>
+
     </footer>
 
-    <!-- ===== COMPLETE JAVASCRIPT WITH FIREBASE ===== -->
-    <script type="module">
-        // ====================================
-        // ORDERS PAGE - FIREBASE
-        // ====================================
-       import { auth, db, collection, getDocs, onSnapshot, query, orderBy } from './firebase.js';
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    <!-- ===== CART SIDEBAR ===== -->
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h2>🛒 Cart</h2>
+            <button id="close-cart">✕</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p style="color:#888; text-align:center; padding:40px 0;">Your cart is empty.</p>
+        </div>
+        <div class="cart-footer">
+            <h3>Total: Rs. <span id="cart-total">0</span></h3>
+            <a href="checkout.html" class="checkout-btn">Proceed to Checkout</a>
+        </div>
+    </div>
 
+    <!-- ========================= -->
+    <!-- JAVASCRIPT (MODULE) -->
+    <!-- ========================= -->
+
+    <script type="module">
+        // ======================================
+        // IMPORTS
+        // ======================================
+        import {
+            db,
+            collection,
+            getDocs,
+            onSnapshot,
+            query,
+            orderBy
+        } from "./js/firebase.js";
+
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        // ======================================
+        // FORMAT PRICE
+        // ======================================
         function formatPrice(price) {
-            return Number(price).toLocaleString('en-PK');
+            return Number(price).toLocaleString("en-PK");
         }
 
-        // ====================================
-        // LOAD ORDERS FROM FIREBASE
-        // ====================================
-        window.loadOrders = async function () {
-            const container = document.getElementById('orders-container');
-            if (!container) return;
+        // ======================================
+        // DISPLAY ORDERS
+        // ======================================
+        function displayOrders(orders) {
 
-            // Show loading
+            const container = document.getElementById("orders-container");
+
+            if (!orders || orders.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            container.innerHTML = "";
+
+            orders.forEach(order => {
+
+                const status = order.status || "processing";
+
+                const statusText = {
+                    processing: "Processing ⏳",
+                    shipped: "Shipped 🚚",
+                    delivered: "Delivered ✅",
+                    cancelled: "Cancelled ❌"
+                };
+
+                let itemsHTML = "";
+
+                if (order.items && order.items.length > 0) {
+
+                    order.items.forEach(item => {
+
+                        itemsHTML += `
+                            <div class="order-item">
+                                <img src="${item.image || 'https://via.placeholder.com/60'}">
+                                <div class="item-info">
+                                    <h4>${item.name}</h4>
+                                    <p>
+                                        Qty: ${item.quantity || 1}
+                                        ×
+                                        Rs. ${formatPrice(item.price)}
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+
+                    });
+
+                }
+
+                const orderDate = order.createdAt?.toDate
+                    ? order.createdAt.toDate().toLocaleDateString()
+                    : (order.date || "N/A");
+
+                container.innerHTML += `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span class="order-id">
+                                📦 Order #${order.id || order.orderId || 'N/A'}
+                            </span>
+                            <span style="color:#888;font-size:13px;">
+                                ${orderDate}
+                            </span>
+                            <span class="order-status ${status}">
+                                ${statusText[status] || status}
+                            </span>
+                        </div>
+                        <div class="order-items">
+                            ${itemsHTML}
+                        </div>
+                        <div class="order-footer">
+                            <span class="total">
+                                Total:
+                                Rs. ${formatPrice(order.total || 0)}
+                            </span>
+                            <span style="color:#888;">
+                                💳 ${order.paymentMethod || "Cash on Delivery"}
+                            </span>
+                        </div>
+                        <div class="order-billing">
+                            <strong>
+                                👤 ${order.billing?.name || "Unknown"}
+                            </strong>
+                            <br>
+                            📧 ${order.billing?.email || "-"}
+                            <br>
+                            📞 ${order.billing?.phone || "-"}
+                            <br>
+                            📍 ${order.billing?.address || "-"}
+                        </div>
+                    </div>
+                `;
+
+            });
+
+        }
+
+        // ======================================
+        // EMPTY STATE
+        // ======================================
+        function showEmptyState() {
+
+            document.getElementById("orders-container").innerHTML = `
+                <div class="empty-orders">
+                    <i class="fa-regular fa-clock"></i>
+                    <h3>No Orders Yet</h3>
+                    <p>
+                        You haven't placed any orders yet.
+                    </p>
+                    <a href="index.html#products" style="color:#d4af37; display:inline-block; margin-top:10px;">
+                        🛍️ Start Shopping
+                    </a>
+                </div>
+            `;
+
+        }
+
+        // ======================================
+        // LOAD ORDERS - FILTER MANUALLY
+        // ======================================
+        window.loadMyOrders = async function () {
+
+            const container = document.getElementById("orders-container");
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+
+            if (!user || !user.email) {
+                container.innerHTML = `
+                    <div class="login-prompt">
+                        <i class="fa-regular fa-user"></i>
+                        <h3>🔑 Please Login</h3>
+                        <p style="color:#888; margin:10px 0;">Login to view your orders.</p>
+                        <a href="login.html">Login Now</a>
+                    </div>
+                `;
+                document.getElementById("totalOrders").textContent = "0";
+                return;
+            }
+
             container.innerHTML = `
                 <div class="loading-spinner">
                     <i class="fa-solid fa-spinner fa-spin"></i>
-                    <p>Loading orders from Firebase...</p>
+                    <p>Loading Your Orders...</p>
                 </div>
             `;
 
             try {
-                // Try Firebase first
-                const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
-                const snapshot = await getDocs(q);
+                // Sab orders fetch karo
+                const q = query(
+                    collection(db, "orders"),
+                    orderBy("createdAt", "desc")
+                );
 
-                let orders = [];
+                const snapshot = await getDocs(q);
+                let allOrders = [];
+
                 snapshot.forEach(doc => {
-                    orders.push({ id: doc.id, ...doc.data() });
+                    allOrders.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
                 });
 
-                if (orders.length > 0) {
-                    displayOrders(orders);
-                    document.getElementById('totalOrders').textContent = orders.length;
-                    console.log('✅ Orders loaded from Firebase:', orders.length);
+                // 👇 FILTER MANUALLY - SIRF CURRENT USER KE ORDERS
+                const myOrders = allOrders.filter(order =>
+                    order.billing?.email === user.email
+                );
+
+                if (myOrders.length > 0) {
+                    displayOrders(myOrders);
+                    document.getElementById("totalOrders").textContent = myOrders.length;
                 } else {
-                    // Fallback to localStorage
+                    // Check localStorage as backup
                     const localOrders = JSON.parse(localStorage.getItem('orders')) || [];
-                    if (localOrders.length > 0) {
-                        displayOrders(localOrders);
-                        document.getElementById('totalOrders').textContent = localOrders.length;
-                        console.log('📦 Orders loaded from localStorage:', localOrders.length);
+                    const myLocalOrders = localOrders.filter(o =>
+                        o.billing?.email === user.email
+                    );
+
+                    if (myLocalOrders.length > 0) {
+                        displayOrders(myLocalOrders);
+                        document.getElementById("totalOrders").textContent = myLocalOrders.length;
                     } else {
                         showEmptyState();
                     }
                 }
 
-                // Setup real-time listener
+                // Real-time listener with manual filter
                 setupRealtimeListener();
 
             } catch (error) {
-                console.error('❌ Firebase Error:', error);
-                // Fallback to localStorage
-                const localOrders = JSON.parse(localStorage.getItem('orders')) || [];
-                if (localOrders.length > 0) {
-                    displayOrders(localOrders);
-                    document.getElementById('totalOrders').textContent = localOrders.length;
-                    console.log('📦 Fallback to localStorage:', localOrders.length);
-                } else {
-                    showEmptyState();
-                }
+                console.error('❌ Error:', error);
+                showLocalOrders();
             }
         };
 
-        // ====================================
+        // ======================================
         // REAL-TIME LISTENER
-        // ====================================
+        // ======================================
         function setupRealtimeListener() {
             try {
-                const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
+                const q = query(
+                    collection(db, "orders"),
+                    orderBy("createdAt", "desc")
+                );
 
                 onSnapshot(q, (snapshot) => {
-                    const orders = [];
+                    const allOrders = [];
                     snapshot.forEach(doc => {
-                        orders.push({ id: doc.id, ...doc.data() });
+                        allOrders.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
                     });
 
-                    if (orders.length > 0) {
-                        displayOrders(orders);
-                        document.getElementById('totalOrders').textContent = orders.length;
-                        console.log('🔄 Real-time update:', orders.length, 'orders');
+                    // Filter manually
+                    const user = JSON.parse(localStorage.getItem('currentUser'));
+                    if (user && user.email) {
+                        const myOrders = allOrders.filter(o =>
+                            o.billing?.email === user.email
+                        );
+                        displayOrders(myOrders);
+                        document.getElementById("totalOrders").textContent = myOrders.length;
                     }
                 }, (error) => {
-                    console.log('⚠️ Real-time listener error:', error);
+                    console.log('⚠️ Real-time error:', error);
                 });
 
             } catch (error) {
-                console.log('⚠️ Real-time listener not available');
+                console.log('⚠️ Listener error:', error);
             }
         }
 
-        // ====================================
-        // DISPLAY ORDERS
-        // ====================================
-        function displayOrders(orders) {
-            const container = document.getElementById('orders-container');
-            if (!container) return;
+        // ======================================
+        // SHOW LOCAL ORDERS (Fallback)
+        // ======================================
+        function showLocalOrders() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const localOrders = JSON.parse(localStorage.getItem('orders')) || [];
 
-            if (orders.length === 0) {
-                showEmptyState();
-                return;
+            let myOrders = [];
+            if (user && user.email) {
+                myOrders = localOrders.filter(o => o.billing?.email === user.email);
             }
 
-            container.innerHTML = '';
-            orders.forEach(order => {
-                const statusClass = order.status || 'processing';
-                const statusLabels = {
-                    delivered: 'Delivered ✓',
-                    processing: 'Processing ⏳',
-                    shipped: 'Shipped 🚚',
-                    cancelled: 'Cancelled ✕'
-                };
+            if (myOrders.length > 0) {
+                displayOrders(myOrders);
+                document.getElementById("totalOrders").textContent = myOrders.length;
+            } else {
+                showEmptyState();
+            }
+        }
 
-                let itemsHTML = '';
-                if (order.items && order.items.length > 0) {
-                    order.items.forEach(item => {
-                        itemsHTML += `
-                            <div class="order-item">
-                                <img src="${item.image || 'https://via.placeholder.com/50'}" alt="${item.name}">
-                                <div class="item-info">
-                                    <h4>${item.name}</h4>
-                                    <p>Qty: ${item.quantity || 1} × Rs. ${formatPrice(item.price)}</p>
+        // ======================================
+        // CART FUNCTIONS
+        // ======================================
+        function updateCartUI() {
+            const count = document.getElementById("cart-count");
+            const items = document.getElementById("cart-items");
+            const total = document.getElementById("cart-total");
+
+            if (count) {
+                count.textContent = cart.length;
+            }
+
+            if (items) {
+                let totalPrice = 0;
+                if (cart.length === 0) {
+                    items.innerHTML = `<p style="color:#888; text-align:center; padding:40px 0;">Your cart is empty.</p>`;
+                } else {
+                    items.innerHTML = '';
+                    cart.forEach((item, index) => {
+                        const price = Number(item.price) || 0;
+                        totalPrice += price;
+                        items.innerHTML += `
+                            <div style="display:flex; align-items:center; gap:15px; padding:12px 0; border-bottom:1px solid #333;">
+                                <img src="${item.image || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; object-fit:cover; border-radius:10px;">
+                                <div style="flex:1;">
+                                    <h4 style="font-size:14px;">${item.name}</h4>
+                                    <p style="color:#d4af37; font-weight:600;">Rs. ${formatPrice(price)}</p>
                                 </div>
+                                <button onclick="window.removeFromCart(${index})" style="background:transparent; border:none; color:#ff4444; font-size:18px; cursor:pointer;">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
                             </div>
                         `;
                     });
                 }
-
-                container.innerHTML += `
-                    <div class="order-card">
-                        <div class="order-header">
-                            <span class="order-id">📦 Order #${order.id}</span>
-                            <span class="order-date" style="color:#888; font-size:14px;">${order.date || new Date(order.createdAt).toLocaleDateString()}</span>
-                            <span class="order-status ${statusClass}">${statusLabels[statusClass]}</span>
-                        </div>
-                        <div class="order-items">${itemsHTML}</div>
-                        <div class="order-footer">
-                            <span class="total">Total: Rs. ${formatPrice(order.total || 0)}</span>
-                            <span style="color:#888; font-size:13px;">💳 ${order.paymentMethod || 'Cash on Delivery'}</span>
-                        </div>
-                        <div class="order-billing">
-                            <strong>👤 ${order.billing?.name || 'Unknown'}</strong> |
-                            📧 ${order.billing?.email || 'N/A'} |
-                            📞 ${order.billing?.phone || 'N/A'} |
-                            📍 ${order.billing?.address || 'N/A'}
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        // ====================================
-        // SHOW EMPTY STATE
-        // ====================================
-        function showEmptyState() {
-            const container = document.getElementById('orders-container');
-            container.innerHTML = `
-                <div class="empty-orders">
-                    <i class="fa-regular fa-clock"></i>
-                    <h3>No Orders Yet</h3>
-                    <p>Orders will appear here once customers place them.</p>
-                </div>
-            `;
-            document.getElementById('totalOrders').textContent = '0';
-        }
-
-        // ====================================
-        // CART FUNCTIONS
-        // ====================================
-        function updateCartUI() {
-            const items = document.getElementById('cart-items');
-            const total = document.getElementById('cart-total');
-            const count = document.getElementById('cart-count');
-
-            if (!items) return;
-
-            let totalPrice = 0;
-            if (cart.length === 0) {
-                items.innerHTML = `<p style="color:#888; text-align:center; padding:40px 0;">Your cart is empty.</p>`;
-            } else {
-                items.innerHTML = '';
-                cart.forEach((item, index) => {
-                    totalPrice += item.price;
-                    items.innerHTML += `
-                        <div style="display:flex; align-items:center; gap:15px; padding:12px 0; border-bottom:1px solid #333;">
-                            <img src="${item.image || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; object-fit:cover; border-radius:10px;">
-                            <div style="flex:1;">
-                                <h4 style="font-size:14px;">${item.name}</h4>
-                                <p style="color:#d4af37; font-weight:600;">Rs. ${formatPrice(item.price)}</p>
-                            </div>
-                            <button onclick="removeFromCart(${index})" style="background:transparent; border:none; color:#ff4444; font-size:18px; cursor:pointer;">
-                                <i class="fa-regular fa-trash-can"></i>
-                            </button>
-                        </div>
-                    `;
-                });
+                if (total) total.textContent = formatPrice(totalPrice);
             }
-            if (total) total.textContent = formatPrice(totalPrice);
-            if (count) count.textContent = cart.length;
         }
 
-        function removeFromCart(index) {
+        window.removeFromCart = function (index) {
             cart.splice(index, 1);
-            localStorage.setItem('cart', JSON.stringify(cart));
+            localStorage.setItem("cart", JSON.stringify(cart));
             updateCartUI();
-        }
+        };
 
-        // ====================================
+        // ======================================
         // CART TOGGLE
-        // ====================================
-        document.getElementById('cart-icon')?.addEventListener('click', function (e) {
+        // ======================================
+        document.getElementById("cart-icon")?.addEventListener("click", function (e) {
             e.preventDefault();
-            document.getElementById('cart-sidebar')?.classList.add('active');
+            document.getElementById("cart-sidebar")?.classList.add("active");
         });
 
-        document.getElementById('close-cart')?.addEventListener('click', function () {
-            document.getElementById('cart-sidebar')?.classList.remove('active');
+        document.getElementById("close-cart")?.addEventListener("click", function () {
+            document.getElementById("cart-sidebar")?.classList.remove("active");
         });
 
-        // ====================================
+        // ======================================
         // MOBILE MENU
-        // ====================================
-        document.getElementById('menuBtn')?.addEventListener('click', function () {
-            document.getElementById('navMenu')?.classList.toggle('active');
+        // ======================================
+        document.getElementById("menuBtn")?.addEventListener("click", function () {
+            document.getElementById("navMenu")?.classList.toggle("active");
         });
 
-        // ====================================
-        // LOADER
-        // ====================================
-        window.addEventListener('load', function () {
-            const loader = document.getElementById('loader');
-            if (loader) setTimeout(() => loader.classList.add('hide'), 500);
-            loadOrders();
+        // ======================================
+        // PAGE LOAD
+        // ======================================
+        window.addEventListener("load", () => {
+            const loader = document.getElementById("loader");
+            if (loader) {
+                setTimeout(() => {
+                    loader.classList.add("hide");
+                }, 500);
+            }
+
+            loadMyOrders();
             updateCartUI();
-            console.log('✅ Orders Page with Firebase Loaded!');
+
+            console.log("✅ My Orders Page Loaded - Only User's Orders");
         });
 
-        // Make loadOrders global for refresh button
-        window.loadOrders = loadOrders;
-
-        console.log('✅ Orders Page Ready!');
+        console.log("✅ Firebase Orders Ready");
     </script>
 
 </body>
