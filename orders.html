@@ -437,7 +437,7 @@
 
     <script type="module">
         // ======================================
-        // IMPORTS
+        // IMPORTS - ✅ FIXED (./js/ hatao)
         // ======================================
         import {
             db,
@@ -446,7 +446,7 @@
             onSnapshot,
             query,
             orderBy
-        } from "./js/firebase.js";
+        } from "./firebase.js";  // 👈 YEH CHANGE KARO
 
         let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -537,7 +537,7 @@
                         </div>
                         <div class="order-billing">
                             <strong>
-                                👤 ${order.billing?.name || "Unknown"}
+                                👤 ${order.billing?.fullName || order.billing?.name || "Unknown"}
                             </strong>
                             <br>
                             📧 ${order.billing?.email || "-"}
@@ -576,7 +576,7 @@
         // ======================================
         // LOAD ORDERS - FILTER MANUALLY
         // ======================================
-        window.loadMyOrders = async function () {
+        window.loadMyOrders = async function() {
 
             const container = document.getElementById("orders-container");
             const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -746,7 +746,7 @@
             }
         }
 
-        window.removeFromCart = function (index) {
+        window.removeFromCart = function(index) {
             cart.splice(index, 1);
             localStorage.setItem("cart", JSON.stringify(cart));
             updateCartUI();
@@ -755,19 +755,19 @@
         // ======================================
         // CART TOGGLE
         // ======================================
-        document.getElementById("cart-icon")?.addEventListener("click", function (e) {
+        document.getElementById("cart-icon")?.addEventListener("click", function(e) {
             e.preventDefault();
             document.getElementById("cart-sidebar")?.classList.add("active");
         });
 
-        document.getElementById("close-cart")?.addEventListener("click", function () {
+        document.getElementById("close-cart")?.addEventListener("click", function() {
             document.getElementById("cart-sidebar")?.classList.remove("active");
         });
 
         // ======================================
         // MOBILE MENU
         // ======================================
-        document.getElementById("menuBtn")?.addEventListener("click", function () {
+        document.getElementById("menuBtn")?.addEventListener("click", function() {
             document.getElementById("navMenu")?.classList.toggle("active");
         });
 
