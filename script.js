@@ -4,6 +4,9 @@
 
 console.log("✅ Script Loaded!");
 
+// ====================================
+// PRODUCTS DATA
+// ====================================
 const products = [
     {
         id: 1,
@@ -28,9 +31,8 @@ const products = [
         category: "Unisex",
         image: "./perfume3.jpg",
         stock: 10
-    }
+    },
 ];
-
 
 // ====================================
 // CART
@@ -57,7 +59,7 @@ function displayProducts(productsArray) {
     }
 
     if (productsArray.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:60px; grid-column:1/-1;"><h3>No Products Found</h3></div>`;
+        container.innerHTML = `<div style="text-align:center; padding:60px; grid-column:1/-1;"><h3 style="color:#d4af37;">No Products Found</h3></div>`;
         return;
     }
 
@@ -99,15 +101,38 @@ function loadProducts() {
 // ====================================
 function addToCart(productId) {
     const product = products.find(p => p.id === productId);
-    if (!product) return;
+    if (!product) {
+        alert('❌ Product not found!');
+        return;
+    }
     if (product.stock <= 0) {
         alert('❌ Out of stock!');
         return;
     }
-    cart.push({ ...product });
+    
+    // Check if already in cart
+    const existingItem = cart.find(item => item.id === productId);
+    if (existingItem) {
+        alert('⚠️ Already in cart!');
+        return;
+    }
+    
+    cart.push({ ...product, quantity: 1 });
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartUI();
-    alert(`✅ ${product.name} added to cart!`);
+    
+    // Animation effect
+    const btn = event?.target;
+    if (btn) {
+        btn.innerHTML = '✅ Added!';
+        btn.style.background = '#28a745';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fa-solid fa-cart-plus"></i> Add to Cart';
+            btn.style.background = '#d4af37';
+        }, 1500);
+    }
+    
+    console.log(`✅ ${product.name} added to cart!`);
 }
 
 // ====================================
@@ -115,10 +140,11 @@ function addToCart(productId) {
 // ====================================
 function removeFromCart(index) {
     const removed = cart[index];
+    if (!removed) return;
     cart.splice(index, 1);
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartUI();
-    alert(`❌ ${removed.name} removed`);
+    console.log(`❌ ${removed.name} removed from cart`);
 }
 
 // ====================================
@@ -137,13 +163,20 @@ function updateCartUI() {
     } else {
         items.innerHTML = '';
         cart.forEach((item, index) => {
-            totalPrice += item.price;
+            const price = Number(item.price) || 0;
+            const qty = item.quantity || 1;
+            totalPrice += price * qty;
             items.innerHTML += `
                 <div style="display:flex; align-items:center; gap:15px; padding:12px 0; border-bottom:1px solid #333;">
                     <img src="${item.image || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; object-fit:cover; border-radius:10px;">
                     <div style="flex:1;">
-                        <h4 style="font-size:14px;">${item.name}</h4>
-                        <p style="color:#d4af37; font-weight:600;">Rs. ${formatPrice(item.price)}</p>
+                        <h4 style="font-size:14px; color:#fff;">${item.name}</h4>
+                        <p style="color:#d4af37; font-weight:600;">Rs. ${formatPrice(price)}</p>
+                        <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                            <button onclick="updateQty(${index}, -1)" style="background:#333; border:none; color:#fff; padding:2px 10px; border-radius:4px; cursor:pointer;">−</button>
+                            <span style="color:#fff; font-size:13px;">${qty}</span>
+                            <button onclick="updateQty(${index}, 1)" style="background:#333; border:none; color:#fff; padding:2px 10px; border-radius:4px; cursor:pointer;">+</button>
+                        </div>
                     </div>
                     <button onclick="removeFromCart(${index})" style="background:transparent; border:none; color:#ff4444; font-size:18px; cursor:pointer;">
                         <i class="fa-regular fa-trash-can"></i>
@@ -157,11 +190,32 @@ function updateCartUI() {
 }
 
 // ====================================
+// UPDATE QUANTITY
+// ====================================
+function updateQty(index, change) {
+    if (!cart[index]) return;
+    cart[index].quantity = (cart[index].quantity || 1) + change;
+    if (cart[index].quantity < 1) {
+        cart.splice(index, 1);
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartUI();
+}
+
+// ====================================
 // FILTER PRODUCTS
 // ====================================
 function filterProducts(category) {
     const filtered = products.filter(p => p.category === category);
     displayProducts(filtered);
+    
+    // Update active button
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.category === category) {
+            btn.classList.add('active');
+        }
+    });
 }
 
 // ====================================
@@ -169,8 +223,12 @@ function filterProducts(category) {
 // ====================================
 document.getElementById('search-input')?.addEventListener('input', function () {
     const value = this.value.toLowerCase();
-    const filtered = products.filter(p => p.name.toLowerCase().includes(value));
-    displayProducts(filtered);
+    if (value === '') {
+        displayProducts(products);
+    } else {
+        const filtered = products.filter(p => p.name.toLowerCase().includes(value));
+        displayProducts(filtered);
+    }
 });
 
 // ====================================
@@ -190,7 +248,19 @@ document.getElementById('close-cart')?.addEventListener('click', function () {
 // ====================================
 document.getElementById('newsletterForm')?.addEventListener('submit', function (e) {
     e.preventDefault();
-    alert('✅ Thank you for subscribing!');
+    const email = this.querySelector('input[type="email"]')?.value;
+    if (email) {
+        alert(`✅ Thank you ${email} for subscribing!`);
+        this.reset();
+    }
+});
+
+// ====================================
+// CONTACT FORM
+// ====================================
+document.getElementById('contactForm')?.addEventListener('submit', function (e) {
+    e.preventDefault();
+    alert('✅ Message sent successfully! We will get back to you soon.');
     this.reset();
 });
 
@@ -221,8 +291,10 @@ window.addEventListener('load', function () {
 // ====================================
 window.addToCart = addToCart;
 window.removeFromCart = removeFromCart;
+window.updateQty = updateQty;
 window.filterProducts = filterProducts;
 window.updateCartUI = updateCartUI;
 
 console.log(`📦 ${products.length} products loaded`);
 console.log(`🛒 ${cart.length} cart items`);
+console.log(`📋 ${orders.length} orders`);
