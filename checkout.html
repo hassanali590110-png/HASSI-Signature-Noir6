@@ -717,8 +717,9 @@
             <a href="checkout.html" class="checkout-btn">Proceed to Checkout</a>
         </div>
     </div>
-
-
+<!-- ============================================================ -->
+<!-- JAVASCRIPT -->
+<!-- ============================================================ -->
 <script type="module">
     // ====================================
     // IMPORTS - ✅ FIXED PATH
@@ -727,7 +728,9 @@
         db,
         collection,
         addDoc
-    } from "./firebase.js";  // 👈 YEH CHANGE KARO (./js/ hatao)
+    } from "./firebase.js";
+
+    console.log('✅ Firebase imported successfully!'); // Debug
 
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
@@ -845,12 +848,12 @@
     });
 
     // ====================================
-    // PLACE ORDER - FIXED ✅
+    // PLACE ORDER - FIXED ✅ WITH DEBUG LOGS
     // ====================================
     document.getElementById('checkoutForm')?.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        console.log('✅ Form Submitted!');
+        console.log('✅ 1. Form Submitted!');
 
         const firstName = document.getElementById('firstName').value.trim();
         const lastName = document.getElementById('lastName').value.trim();
@@ -859,6 +862,8 @@
         const address = document.getElementById('address').value.trim();
         const city = document.getElementById('city').value.trim();
         const country = document.getElementById('country').value;
+
+        console.log('✅ 2. Form Data:', { firstName, lastName, email, phone, address, city, country });
 
         if (!firstName || !lastName || !email || !phone || !address || !city) {
             alert('❌ Please fill all required fields!');
@@ -918,30 +923,36 @@
             sessionId: sessionId
         };
 
+        console.log('✅ 3. Order Created:', order);
+
         const submitBtn = document.getElementById('placeOrderBtn');
         submitBtn.disabled = true;
         submitBtn.textContent = '⏳ Placing Order...';
 
         try {
+            console.log('✅ 4. Saving to Firebase...');
+            
             // Save to Firebase
             const docRef = await addDoc(collection(db, "orders"), {
                 ...order,
                 createdAt: new Date().toISOString(),
                 status: 'processing'
             });
-            console.log('✅ Order saved to Firebase! ID:', docRef.id);
+            console.log('✅ 5. Order saved to Firebase! ID:', docRef.id);
 
             // Save to localStorage
             const orders = JSON.parse(localStorage.getItem('orders')) || [];
             orders.push(order);
             localStorage.setItem('orders', JSON.stringify(orders));
+            console.log('✅ 6. Order saved to localStorage');
 
             // Clear cart
             localStorage.setItem('cart', JSON.stringify([]));
             cart = [];
+            console.log('✅ 7. Cart cleared');
 
             // 👇 REDIRECT TO CONFIRMATION PAGE
-            console.log('🔀 Redirecting to confirmation page...');
+            console.log('✅ 8. Redirecting to confirmation page...');
             window.location.href = `order-confirmation.html?orderId=${order.id}`;
 
         } catch (error) {
@@ -1041,3 +1052,4 @@
         console.log('✅ Professional Checkout Page Loaded!');
     });
 </script>
+
